@@ -5,6 +5,7 @@ import PreLogin from './shared/pre-login';
 import PostLogin from './shared/post-login';
 
 import LoginPage from './user/login';
+import SignUpPage from './user/signup';
 import Greed from './greed/greed';
 
 
@@ -20,6 +21,7 @@ module.exports = (
 			
 			<Route component={PreLogin}>
 				<Route path='/login' component={LoginPage} />
+				<Route path='/signup' component={SignUpPage} />
 			</Route>
 			
 		</Route>

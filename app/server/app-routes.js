@@ -21,6 +21,9 @@ router.get("/user", auth.isAuthenticated, userController.getUser);
 	Router : all get routs to be accessed by user should be handled by react-router
 **/
 // public urls
+router.get("/signup", function(request, response, next) {
+	response.render(request.url);
+});
 router.get("/login", function(request, response, next) {
 	response.render(request.url);
 });

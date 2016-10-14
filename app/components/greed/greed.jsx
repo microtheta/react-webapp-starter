@@ -12,7 +12,7 @@ module.exports = React.createClass({
 		return (
 			<div>
 				<NavBar user={this.props.user} />
-				<div className="uk-container-center uk-container" >
+				<div className="uk-container-center uk-container uk-margin-top uk-margin-bottom" >
 					<div className="uk-grid">
 						<div className="uk-width-small-1-1 uk-width-medium-2-10">
 							

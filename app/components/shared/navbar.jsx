@@ -1,6 +1,7 @@
 'use strict';
 
 var React = require('react');
+var Link = require('react-router').Link;
 var If = require('./if');
 
 module.exports = React.createClass({
@@ -8,11 +9,11 @@ module.exports = React.createClass({
 
 	render: function render() {
 		return (
-			<nav className="tm-navbar uk-navbar uk-navbar-attached uk-margin-bottom">
+			<nav className="tm-navbar uk-navbar uk-navbar-attached">
 
 				<div className="uk-container uk-container-center">
 
-					<a className="uk-navbar-brand uk-hidden-small" href="/">
+					<a className={"uk-navbar-brand " +( this.props.user ? "uk-hidden-small" : '')} href="/">
 						<img className="uk-margin uk-margin-remove" src="/public/images/logo.png" style={{"height":"30px", "width":"auto"}} title="UIkit" alt="UIkit" />
 					</a>
 
@@ -204,11 +205,11 @@ module.exports = React.createClass({
 
 						<div className="uk-navbar-flip">
 							<ul className="uk-navbar-nav">
-								<li>
-									<a href="/login"> LOGIN </a>
+								<li className={ (this.props.currentmenu == 'login' ? 'uk-active' : '')}>
+									<Link to='/login'> LOGIN </Link>
 								</li>
-								<li>
-									<a href="/signup"> CREATE AN ACCOUNT </a>
+								<li className={ (this.props.currentmenu == 'signup' ? 'uk-active' : '')}>
+									<Link to='/signup'> CREATE AN ACCOUNT </Link>
 								</li>
 							</ul>
 						</div>
