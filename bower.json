@@ -1,0 +1,14 @@
+{
+  "name": "projectplay",
+  "description": "Application Project",
+  "keywords": [
+    "Application",
+    "Project"
+  ],
+  "main": [],
+  "ignore": [],
+  "dependencies": {
+    "bootstrap": "^3.3.7",
+    "uikit": "^2.27.1"
+  }
+}
