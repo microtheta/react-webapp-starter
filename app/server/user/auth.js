@@ -2,6 +2,7 @@
 
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
+const user = require(global.BASE_PATH + '/app/dao/user.dao');
 
 
 passport.serializeUser((user, done) => {
@@ -10,11 +11,11 @@ passport.serializeUser((user, done) => {
 
 passport.deserializeUser((id, done) => {
 	
-	done(null, {id:1, name: "Mahesh Thumar", email: "mahesh@cb.com"});
+	/* TODO: find a better way to do this */
 
-	/*User.findById(id, (err, user) => {
-		done(err, user);
-	});*/
+	user.findById(id).then(function (userObj) {
+		done(null, userObj);
+	});
 });
 
 
@@ -23,7 +24,15 @@ passport.deserializeUser((id, done) => {
 */
 passport.use(new LocalStrategy({ usernameField: 'email' }, (email, password, done) => {
 
-	return done(null, {id:1});
+	user.findByEmail(email).then(function (userObj) {
+		if(!userObj) {
+			return done(null, false, { msg: 'Invalid email or password.' });
+		}
+		return done(null, userObj);
+	})
+	.catch(function () {
+		return done(null, false, { msg: 'Invalid email or password.' });
+	});
 
 	/*
 	User.findOne({ email: email.toLowerCase() }, (err, user) => {

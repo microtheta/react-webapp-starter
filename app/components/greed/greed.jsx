@@ -23,7 +23,7 @@ module.exports = React.createClass({
 
 								<h1 className="uk-article-title"> My Article Title </h1>
 
-								<p className="uk-article-meta">Written by {this.props.user.name} Super User on 12 April 2012. Posted in Blog</p>
+								<p className="uk-article-meta">Written by {this.props.user.firstName} Super User on 12 April 2012. Posted in Blog</p>
 
 								<p className="uk-article-lead">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor className ut labore et dolore magna aliqua.</p>
 

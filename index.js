@@ -12,13 +12,15 @@ global.BASE_PATH = __dirname;
 const express = require('express');
 const path = require('path');
 const chalk = require('chalk');
-const bodyParser = require("body-parser");
+const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
 const ReactEngine = require('react-engine');
 const compression = require('compression');
 const session = require('express-session');
 const logger = require('morgan');
 const errorHandler = require('errorhandler');
+const expressValidator = require('express-validator');
+
 
 
 /**
@@ -40,6 +42,7 @@ app.use(session({
 }));
 app.use(bodyParser.json());  // parse the request body and make it availabel as req.body
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(expressValidator());
 
 
 /**

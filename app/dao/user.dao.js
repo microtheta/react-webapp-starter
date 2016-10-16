@@ -1,7 +1,6 @@
 'use strict';
 
-const models = require(BASE_PATH+"/models");
-
+const models = require(global.BASE_PATH+'/models');
 
 var User = models.User;
 

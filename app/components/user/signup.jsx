@@ -18,6 +18,19 @@ module.exports = React.createClass({
 
 						<div className="uk-width-medium-4-10 uk-container-center">
 
+							{ this.props.errors ? 
+								<div className="uk-alert uk-alert-danger" data-uk-alert>
+									<a href="javascript:void(0)" className="uk-alert-close uk-close"></a>
+									<ul>
+										{
+											this.props.errors.map(function(err, i) {
+												return <li key={err.param}> {err.msg} </li>
+											})
+										}
+									</ul>
+								</div> : ''
+							}
+
 							<div className="uk-panel uk-panel-header">
 
 								<h2> Sign up </h2>
@@ -28,10 +41,10 @@ module.exports = React.createClass({
 										{ /* <label className="uk-form-label">Your Name</label> */ }
 										<div className="uk-form-controls uk-grid uk-grid-small">
 											<div className="uk-width-1-2">
-												<input autoFocus type="text" placeholder="First Name" className="uk-width-1-1 uk-form-large" />
+												<input autoFocus type="text" placeholder="First Name" name="firstName" className="uk-width-1-1 uk-form-large" />
 											</div>
 											<div className="uk-width-1-2">
-												<input type="text" placeholder="Last Name" className="uk-width-1-1 uk-form-large" />
+												<input type="text" placeholder="Last Name" name="lastName" className="uk-width-1-1 uk-form-large" />
 											</div>
 										</div>
 									</div>
@@ -46,14 +59,14 @@ module.exports = React.createClass({
 									<div className="uk-form-row">
 										{ /* <label className="uk-form-label">Choose Password</label> */ }
 										<div className="uk-form-controls">
-											<input type="text" placeholder="New password" className="uk-width-1-1 uk-form-large" />
+											<input type="text" placeholder="New password" name="password" className="uk-width-1-1 uk-form-large" />
 										</div>
 									</div>
 
 									<div className="uk-form-row">
 										{ /* <label className="uk-form-label">Choose Password</label> */ }
 										<div className="uk-form-controls">
-											<input type="text" placeholder="Confirm password" className="uk-width-1-1 uk-form-large" />
+											<input type="text" placeholder="Confirm password" name="confirmpassword"  className="uk-width-1-1 uk-form-large" />
 										</div>
 									</div>
 

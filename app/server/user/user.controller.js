@@ -1,7 +1,7 @@
 'use strict';
 
 const auth = require('./auth');
-const user = require(BASE_PATH + '/app/dao/user.dao');
+const user = require(global.BASE_PATH + '/app/dao/user.dao');
 
 exports.postLogin = function(req, res, next) {
 
@@ -10,7 +10,7 @@ exports.postLogin = function(req, res, next) {
 			if (err) { return next(err); }
 			
 			if (!user) {
-				return res.redirect('/login');
+				return res.status(400).render(req.url, {errors: info});
 			}
 
 			req.logIn(user, function(err) {
@@ -25,18 +25,54 @@ exports.postLogin = function(req, res, next) {
 };
 
 exports.postSignup = function(req, res, next) {
-	user.create(req.body).then(function (data) {
-		res.send(data);
+
+	let userValidatorSchema = {
+		'firstName': {
+			notEmpty: true,
+			errorMessage: 'First Name Required'
+		},
+		'lastName': {
+			notEmpty: true,
+			errorMessage: 'Last Name Required'
+		},
+		'email': {
+			isEmail: {
+				errorMessage: 'Invalid Email'
+			}
+		},
+		'password': {
+			notEmpty: true,
+			errorMessage: 'Password Required'
+		},
+		'confirmpassword': {
+			notEmpty: true,
+			errorMessage: 'Confirm Password Required'
+		}
+	};
+
+	// Validate user request
+	req.checkBody(userValidatorSchema);
+	
+	let errors = req.validationErrors();
+	if (errors) {
+		res.status(400).render(req.url, {errors: errors});
+		return;
+	}
+
+	user.create(req.body).then(function (user) {
+		req.logIn(user, function() {
+			res.redirect(req.session.returnTo || '/');
+		});
 	});
 };
 
-exports.logout = function(req, res, next) {
+exports.logout = function(req, res) {
 	auth.logOut(req, res, function() {
 		res.redirect('/');
 	});
 };
 
-exports.getUser = function(req, res, next) {
+exports.getUser = function(req, res) {
 	user.findAll().then(function (data) {
 		res.send(data);
 	});

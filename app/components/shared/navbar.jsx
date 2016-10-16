@@ -32,14 +32,14 @@ module.exports = React.createClass({
 
 							<div className="uk-navbar-flip">
 								<ul className="uk-navbar-nav">
-									<li className="uk-button-dropdown" data-uk-dropdown="{mode:'click'}" aria-haspopup="true" aria-expanded="false">
+									<li className="uk-button-dropdown" data-uk-dropdown="{mode:'click', pos:'bottom-right'}" aria-haspopup="true" aria-expanded="false">
 										<div className="uk-navbar-brand" style={{"lineHeight": "41px"}}>
 											<img style={{"maxHeight": "32px"}} className="uk-border-circle" src="/public/images/placeholder_avatar.svg" alt="" /> 
 										</div>
 										<div className="uk-dropdown-blank uk-dropdown-navbar uk-panel uk-panel-box uk-dropdown-bottom uk-padding-bottom-remove" aria-hidden="true" >
 											<div>
 												<h3 className="uk-panel-title">Title</h3>
-												Lorem ipsum dolor sit amet, consectetur adipisicing elit.	
+												{JSON.stringify(this.props.user, null, 2)}
 											</div>
 											<hr/>
 											<div>
