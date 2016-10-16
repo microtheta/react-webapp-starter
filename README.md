@@ -20,14 +20,14 @@
 - Chrome Livereload plugin
 
 ## Start playing
-  ```git clone https://github.com/thumarmahesh/playground.git```
+```git clone https://github.com/thumarmahesh/playground.git```
 
-  ```npm install -g bower```
+```npm install -g bower```
 
-  ```npm install```
+```npm install```
 
-  ```bower install```
+```bower install```
 
-  ```gulp```
+start server using ```gulp```
 
-  and visit ```http://localhost:9093/```
+and visit  ```http://localhost:9093/```
