@@ -8,6 +8,7 @@
 - Authentication using passport
 - Front-End / CSS framework : UIKit
 - Build/Browserify using Gulp
+- Gulp-live-reload with nodemon
 - Manage depedency
   - Server side using NPM
   - Client side using bower
@@ -16,6 +17,7 @@
 
 ## Tech.
 - NodeJS
+- Chrome Livereload plugin
 
 ## Start playing
   ```git clone https://github.com/thumarmahesh/playground.git```
@@ -27,3 +29,5 @@
   ```bower install```
 
   ```gulp```
+
+  and visit ```http://localhost:9093/```

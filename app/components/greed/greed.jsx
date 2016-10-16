@@ -21,7 +21,7 @@ module.exports = React.createClass({
 							
 							<div className="uk-article">
 
-								<h1 className="uk-article-title">Article title</h1>
+								<h1 className="uk-article-title"> My Article Title </h1>
 
 								<p className="uk-article-meta">Written by {this.props.user.name} Super User on 12 April 2012. Posted in Blog</p>
 

@@ -10,8 +10,10 @@ const userController = require('./user/user.controller');
 
 //api routes
 router.post("/login", userController.postLogin);
+router.post("/signup", userController.postSignup);
 router.get("/logout", userController.logout);
 router.get("/user", auth.isAuthenticated, userController.getUser);
+
 
 
 

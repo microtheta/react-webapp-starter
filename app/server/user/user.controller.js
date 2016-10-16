@@ -1,6 +1,7 @@
 'use strict';
 
 const auth = require('./auth');
+const user = require(BASE_PATH + '/app/dao/user.dao');
 
 exports.postLogin = function(req, res, next) {
 
@@ -23,6 +24,12 @@ exports.postLogin = function(req, res, next) {
 	}
 };
 
+exports.postSignup = function(req, res, next) {
+	user.create(req.body).then(function (data) {
+		res.send(data);
+	});
+};
+
 exports.logout = function(req, res, next) {
 	auth.logOut(req, res, function() {
 		res.redirect('/');
@@ -30,5 +37,7 @@ exports.logout = function(req, res, next) {
 };
 
 exports.getUser = function(req, res, next) {
-	res.send(req.user);
+	user.findAll().then(function (data) {
+		res.send(data);
+	});
 };

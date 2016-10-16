@@ -6,6 +6,8 @@ require('babel-register')({
 	only: '*.jsx'
 });
 
+global.BASE_PATH = __dirname;
+
 
 const express = require('express');
 const path = require('path');

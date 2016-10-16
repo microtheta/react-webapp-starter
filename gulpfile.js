@@ -15,6 +15,7 @@ var concat      = require('gulp-concat');
 var rename      = require('gulp-rename');
 var mocha       = require('gulp-mocha');
 var istanbul    = require('gulp-babel-istanbul');
+var livereload  = require('gulp-livereload');
 
 gulp.task('pre-test', function () {
 
@@ -87,9 +88,12 @@ gulp.task('buildlib', ['clean'], function(){ scripts.buildLib(); });
 gulp.task('watch', ['clean'], scripts.watch); // will automatically build first
 
 gulp.task('nodemon', ['watch', 'buildlib'], function (cb) {
+	livereload.listen();
+
 	return nodemon({
 		script: 'index.js',
 		ext: 'js jsx',
+		stdout: false,
 		ignore: ['app/components'] // as build will be triggred while changing this files and node will be restarted due to build file changes ;)
 	}).on('restart', function(){
 		notifier.notify({
@@ -97,7 +101,16 @@ gulp.task('nodemon', ['watch', 'buildlib'], function (cb) {
 			'message': 'Server restarting!',
 			'time': 1000
 		});
-	});
+	}).on('readable', function(data) {
+        this.stdout.on('data', function(chunk) {
+            if (/Express server listening/.test(chunk)) {
+                console.log('livereload');
+                livereload.reload();
+            }
+            process.stdout.write(chunk);
+        });
+        this.stderr.pipe(process.stderr);
+    });
 });
 
 

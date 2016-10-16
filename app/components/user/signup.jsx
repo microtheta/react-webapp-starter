@@ -22,7 +22,7 @@ module.exports = React.createClass({
 
 								<h2> Sign up </h2>
 
-								<form className="uk-form uk-form-stacked">
+								<form className="uk-form uk-form-stacked" action="/signup" method="post">
 
 									<div className="uk-form-row">
 										{ /* <label className="uk-form-label">Your Name</label> */ }
@@ -39,7 +39,7 @@ module.exports = React.createClass({
 									<div className="uk-form-row">
 										{ /* <label className="uk-form-label">Your Email</label> */ }
 										<div className="uk-form-controls">
-											<input type="text" placeholder="Email address" className="uk-width-1-1 uk-form-large" />
+											<input type="text" placeholder="Email address" name="email" className="uk-width-1-1 uk-form-large" />
 										</div>
 									</div>
 
