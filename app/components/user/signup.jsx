@@ -18,12 +18,12 @@ module.exports = React.createClass({
 
 						<div className="uk-width-medium-4-10 uk-container-center">
 
-							{ this.props.errors ? 
+							{ this.props.signuperrors ? 
 								<div className="uk-alert uk-alert-danger" data-uk-alert>
 									<a href="javascript:void(0)" className="uk-alert-close uk-close"></a>
 									<ul>
 										{
-											this.props.errors.map(function(err, i) {
+											this.props.signuperrors.map(function(err, i) {
 												return <li key={err.param}> {err.msg} </li>
 											})
 										}

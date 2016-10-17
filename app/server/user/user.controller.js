@@ -10,7 +10,7 @@ exports.postLogin = function(req, res, next) {
 			if (err) { return next(err); }
 			
 			if (!user) {
-				return res.status(400).render(req.url, {errors: info});
+				return res.status(400).render(req.url, {loginerrors: info});
 			}
 
 			req.logIn(user, function(err) {
@@ -55,7 +55,7 @@ exports.postSignup = function(req, res, next) {
 	
 	let errors = req.validationErrors();
 	if (errors) {
-		res.status(400).render(req.url, {errors: errors});
+		res.status(400).render(req.url, {signuperrors: errors});
 		return;
 	}
 
