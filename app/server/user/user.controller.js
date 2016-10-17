@@ -92,6 +92,7 @@ exports.postSignup = function(req, res, next) {
 				password: hash
 			}
 			user.savePassword(passwordObj).then(function(){
+				/* TODO Send activation Mail */
 				res.render(req.url, {email: newUser.email});
 			});
 
