@@ -2,6 +2,7 @@
 
 const auth = require('./auth');
 const user = require(global.BASE_PATH + '/app/dao/user.dao');
+const mailHelper = require(global.BASE_PATH + '/app/server/utils/mailhelper');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
@@ -90,9 +91,12 @@ exports.postSignup = function(req, res, next) {
 			var passwordObj = {
 				userId: newUser.id,
 				password: hash
-			}
-			user.savePassword(passwordObj).then(function(){
+			};
+
+			user.savePassword(passwordObj).then(function() {
 				/* TODO Send activation Mail */
+				userObj.emailVerificationLink = 'test';
+				mailHelper.sendHtmlMail('usersignup', userObj, 'Welcome To Microtheta! Confirm Your Email', newUser.email);
 				res.render(req.url, {email: newUser.email});
 			});
 
