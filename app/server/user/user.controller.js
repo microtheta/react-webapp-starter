@@ -2,26 +2,43 @@
 
 const auth = require('./auth');
 const user = require(global.BASE_PATH + '/app/dao/user.dao');
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 
 exports.postLogin = function(req, res, next) {
 
-	if (req.body.email && req.body.password) {
-		auth.localAuthenticate(req, res, next, function(err, user, info) {
-			if (err) { return next(err); }
-			
-			if (!user) {
-				return res.status(400).render(req.url, {loginerrors: info});
+	let validatorSchema = {
+		'email': {
+			isEmail: {
+				errorMessage: 'Invalid Email'
 			}
+		},
+		'password': {
+			notEmpty: true,
+			errorMessage: 'Password Required'
+		}
+	};
 
-			req.logIn(user, function(err) {
-				if (err) { return next(err); }
-				res.redirect(req.session.returnTo || '/');
-			});
+	req.checkBody(validatorSchema);
+	let errors = req.validationErrors();
+	if (errors) {
+		return res.status(400).render(req.url, {loginerrors: errors});
+	}
+	
+
+	auth.localAuthenticate(req, res, next, function(err, user, info) {
+		if (err) { return next(err); }
+		
+		if (!user) {
+			return res.status(400).render(req.url, {loginerrors: [info]});
+		}
+
+		req.logIn(user, function(err) {
+			if (err) { return next(err); }
+			res.redirect(req.session.returnTo || '/');
 		});
-	}
-	else {
-		return res.redirect('/login');
-	}
+	});
+	
 };
 
 exports.postSignup = function(req, res, next) {
@@ -52,18 +69,40 @@ exports.postSignup = function(req, res, next) {
 
 	// Validate user request
 	req.checkBody(userValidatorSchema);
-	
 	let errors = req.validationErrors();
 	if (errors) {
 		res.status(400).render(req.url, {signuperrors: errors});
 		return;
 	}
+	if (req.body.password !== req.body.confirmpassword) {
+		res.status(400).render(req.url, {signuperrors: [{'param':'password', 'msg': 'Password and Confirm password is not matching'}] });
+		return;
+	}
+	var userObj = {
+		firstName: req.body.firstName,
+		lastName: req.body.lastName,
+		email: req.body.email
+	};
 
-	user.create(req.body).then(function (user) {
-		req.logIn(user, function() {
-			res.redirect(req.session.returnTo || '/');
+	bcrypt.hash(req.body.password, saltRounds, function(err, hash) {
+
+		user.create(userObj).then(function (newUser) {
+			var passwordObj = {
+				userId: newUser.id,
+				password: hash
+			}
+			user.savePassword(passwordObj).then(function(){
+				res.render(req.url, {email: newUser.email});
+			});
+
+			/*req.logIn(user, function() {
+				res.redirect(req.session.returnTo || '/');
+			});*/
+
 		});
+
 	});
+
 };
 
 exports.logout = function(req, res) {

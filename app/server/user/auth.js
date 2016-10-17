@@ -3,6 +3,8 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const user = require(global.BASE_PATH + '/app/dao/user.dao');
+const constants = require(global.BASE_PATH + '/app/constants');
+var bcrypt = require('bcrypt');
 
 
 passport.serializeUser((user, done) => {
@@ -28,36 +30,26 @@ passport.use(new LocalStrategy({ usernameField: 'email' }, (email, password, don
 		if(!userObj) {
 			return done(null, false, { msg: 'Invalid email or password.' });
 		}
-		return done(null, userObj);
+		user.getPassword(userObj.id).then(function(userPass) {
+			bcrypt.compare(password, userPass.password, function(err, isMatch) {
+
+				if(isMatch) {
+					return done(null, userObj);
+				}
+				else { //password not matching
+					return done(null, false, { msg: 'Invalid email or password' });
+				}
+			});
+		});
 	})
 	.catch(function () {
-		return done(null, false, { msg: 'Invalid email or password.' });
+		return done(null, false, { msg: 'Something went wrong! Please get in touch with us at: '+constants.SUPPORTEMAIL });
 	});
-
-	/*
-	User.findOne({ email: email.toLowerCase() }, (err, user) => {
-		if (err) { return done(err); }
-
-		if (!user) {
-			return done(null, false, { msg: `Email ${email} not found.` });
-		}
-
-		user.comparePassword(password, (err, isMatch) => {
-			if (err) { return done(err); }
-
-			if (isMatch) {
-				return done(null, user);
-			}
-
-			return done(null, false, { msg: 'Invalid email or password.' });
-		});
-
-	}); */
 
 }));
 
 module.exports =  {
-	initialize: function(app){
+	initialize: function(app) {
 		app.use(passport.initialize());
 		app.use(passport.session());
 	},

@@ -1,29 +1,25 @@
 'use strict';
 module.exports = {
   up: function(queryInterface, Sequelize) {
-    return queryInterface.createTable('Users', {
+    return queryInterface.createTable('UserPassword', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      firstName: {
+      password: {
         type: Sequelize.STRING
       },
-      lastName: {
-        type: Sequelize.STRING
-      },
-      isActive: {
-        type: Sequelize.BOOLEAN,
-        defaultValue: false
-      },
-      email: {
-        type: Sequelize.STRING
-      },
-      isEmailVerified: {
-        type: Sequelize.BOOLEAN,
-        defaultValue: false
+      userId: {
+        type: Sequelize.INTEGER,
+        unique: true,
+        references: {
+            model: 'Users',
+            key: 'id'
+        },
+        onUpdate: 'cascade',
+        onDelete: 'cascade'
       },
       createdAt: {
         allowNull: false,
@@ -36,6 +32,6 @@ module.exports = {
     });
   },
   down: function(queryInterface, Sequelize) {
-    return queryInterface.dropTable('Users');
+    return queryInterface.dropTable('UserPassword');
   }
 };

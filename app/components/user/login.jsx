@@ -21,7 +21,11 @@ module.exports = React.createClass({
 							{ this.props.loginerrors ? 
 								<div className="uk-alert uk-alert-danger" data-uk-alert>
 									<a href="javascript:void(0)" className="uk-alert-close uk-close"></a>
-									<p> {this.props.loginerrors.msg} </p>
+									{
+										this.props.loginerrors.map(function(err, i) {
+											return <p key={i}> {err.msg} </p>
+										})
+									}
 								</div> : ''
 							}
 
@@ -29,7 +33,7 @@ module.exports = React.createClass({
 
 							<form className="uk-panel uk-panel-box uk-form" action="/login" method="post" >
 								<div className="uk-form-row">
-									<input autoFocus className="uk-width-1-1 uk-form-large" type="email" placeholder="Username" name="email" required />
+									<input autoFocus className="uk-width-1-1 uk-form-large" type="email" placeholder="Email/Username" name="email" required />
 								</div>
 								<div className="uk-form-row">
 									<input className="uk-width-1-1 uk-form-large" type="password" placeholder="Password" name="password" required />

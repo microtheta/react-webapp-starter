@@ -2,6 +2,7 @@
 
 var React = require('react');
 var NavBar = require('../shared/navbar');
+var If = require('../shared/if');
 
 module.exports = React.createClass({
 	displayName: 'LoginPage',
@@ -16,73 +17,93 @@ module.exports = React.createClass({
 
 					<div className="uk-grid uk-margin-large-top">
 
-						<div className="uk-width-medium-4-10 uk-container-center">
+						<If when={!this.props.email}>
+							<div className="uk-width-medium-4-10 uk-container-center">
 
-							{ this.props.signuperrors ? 
-								<div className="uk-alert uk-alert-danger" data-uk-alert>
-									<a href="javascript:void(0)" className="uk-alert-close uk-close"></a>
-									<ul>
-										{
-											this.props.signuperrors.map(function(err, i) {
-												return <li key={err.param}> {err.msg} </li>
-											})
-										}
-									</ul>
-								</div> : ''
-							}
+								{ this.props.signuperrors ? 
+									<div className="uk-alert uk-alert-danger" data-uk-alert>
+										<a href="javascript:void(0)" className="uk-alert-close uk-close"></a>
+										<ul>
+											{
+												this.props.signuperrors.map(function(err, i) {
+													return <li key={err.param}> {err.msg} </li>
+												})
+											}
+										</ul>
+									</div> : ''
+								}
 
-							<div className="uk-panel uk-panel-header">
+								<div className="uk-panel uk-panel-header">
 
-								<h2> Sign up </h2>
+									<h2> Sign up </h2>
 
-								<form className="uk-form uk-form-stacked" action="/signup" method="post">
+									<form className="uk-form uk-form-stacked" action="/signup" method="post">
 
-									<div className="uk-form-row">
-										{ /* <label className="uk-form-label">Your Name</label> */ }
-										<div className="uk-form-controls uk-grid uk-grid-small">
-											<div className="uk-width-1-2">
-												<input autoFocus type="text" placeholder="First Name" name="firstName" className="uk-width-1-1 uk-form-large" />
+										<div className="uk-form-row">
+											{ /* <label className="uk-form-label">Your Name</label> */ }
+											<div className="uk-form-controls uk-grid uk-grid-small">
+												<div className="uk-width-1-2">
+													<input autoFocus type="text" placeholder="First Name" name="firstName" className="uk-width-1-1 uk-form-large" />
+												</div>
+												<div className="uk-width-1-2">
+													<input type="text" placeholder="Last Name" name="lastName" className="uk-width-1-1 uk-form-large" />
+												</div>
 											</div>
-											<div className="uk-width-1-2">
-												<input type="text" placeholder="Last Name" name="lastName" className="uk-width-1-1 uk-form-large" />
+										</div>
+
+										<div className="uk-form-row">
+											{ /* <label className="uk-form-label">Your Email</label> */ }
+											<div className="uk-form-controls">
+												<input type="text" placeholder="Email address" name="email" className="uk-width-1-1 uk-form-large" />
 											</div>
 										</div>
-									</div>
 
-									<div className="uk-form-row">
-										{ /* <label className="uk-form-label">Your Email</label> */ }
-										<div className="uk-form-controls">
-											<input type="text" placeholder="Email address" name="email" className="uk-width-1-1 uk-form-large" />
+										<div className="uk-form-row">
+											{ /* <label className="uk-form-label">Choose Password</label> */ }
+											<div className="uk-form-controls">
+												<input type="text" placeholder="New password" name="password" className="uk-width-1-1 uk-form-large" />
+											</div>
 										</div>
-									</div>
 
-									<div className="uk-form-row">
-										{ /* <label className="uk-form-label">Choose Password</label> */ }
-										<div className="uk-form-controls">
-											<input type="text" placeholder="New password" name="password" className="uk-width-1-1 uk-form-large" />
+										<div className="uk-form-row">
+											{ /* <label className="uk-form-label">Choose Password</label> */ }
+											<div className="uk-form-controls">
+												<input type="text" placeholder="Confirm password" name="confirmpassword"  className="uk-width-1-1 uk-form-large" />
+											</div>
 										</div>
-									</div>
 
-									<div className="uk-form-row">
-										{ /* <label className="uk-form-label">Choose Password</label> */ }
-										<div className="uk-form-controls">
-											<input type="text" placeholder="Confirm password" name="confirmpassword"  className="uk-width-1-1 uk-form-large" />
+										<div className="uk-form-row">
+											<div className="uk-form-controls">
+												<button type="submit" className="uk-width-2-10 uk-button uk-button-primary uk-button-large">
+												Submit
+												</button>
+											</div>
 										</div>
-									</div>
 
-									<div className="uk-form-row">
-										<div className="uk-form-controls">
-											<button type="submit" className="uk-width-2-10 uk-button uk-button-primary uk-button-large">
-											Submit
-											</button>
-										</div>
-									</div>
+									</form>
 
-								</form>
+								</div>
+
+							</div>
+						</If>
+
+						<If when={this.props.email}>
+							
+							<div className="uk-width-medium-7-10 uk-container-center">
+
+								<div className="uk-alert uk-alert-large uk-alert-primary">
+
+									<h2> Thank You! Please check your inbox to activate your account </h2>
+
+									<p> We've sent you a confirmation email with a link to activate your account. </p>
+									<p> Please check your email(<b>{this.props.email}</b>) and click the link. </p>
+									<p> This helps to ensure that your (and our) inbox remains free of spam. :)</p>
+	
+								</div> 							
 
 							</div>
 
-						</div>
+						</If>
 
 					</div>
 

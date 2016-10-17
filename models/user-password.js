@@ -1,28 +1,23 @@
 'use strict';
 module.exports = function(sequelize, DataTypes) {
-	var Users = sequelize.define('Users', {
+	var UserPass = sequelize.define('UserPassword', {
 		id: {
 			allowNull: false,
 			autoIncrement: true,
 			primaryKey: true,
 			type: DataTypes.INTEGER
 		},
-		firstName: {
+		userId: {
+			type: DataTypes.INTEGER,
+			references: {
+				model: 'Users',
+				key: 'id'
+			},
+			onUpdate: 'cascade',
+			onDelete: 'cascade'
+	  	},
+		password: {
 			type: DataTypes.STRING
-		},
-		lastName: {
-			type: DataTypes.STRING
-		},
-		isActive: {
-			type: DataTypes.BOOLEAN,
-			defaultValue: false
-		},
-		email: {
-			type: DataTypes.STRING
-		},
-		isEmailVerified: {
-			type: DataTypes.BOOLEAN,
-			defaultValue: false
 		},
 		createdAt: {
 			allowNull: false,
@@ -33,7 +28,7 @@ module.exports = function(sequelize, DataTypes) {
 			type: DataTypes.DATE
 		}
 	}, {
-		tableName: 'Users',
+		tableName: 'UserPassword',
 	});
-	return Users;
+	return UserPass;
 };
