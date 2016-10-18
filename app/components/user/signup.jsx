@@ -1,7 +1,6 @@
 'use strict';
 
 var React = require('react');
-var Link = require('react-router').Link;
 var NavBar = require('../shared/navbar');
 var If = require('../shared/if');
 
@@ -43,8 +42,8 @@ module.exports = React.createClass({
 												<h2> Email address already in use </h2>
 
 												<p> An existing account is already associated with the email address you have entered. </p>
-												<p> <Link to="/login"> Click here to login </Link> using your password. </p>
-												<p> If you forgot your password, <Link to="/resetpassword"> click here </Link> to reset your password. </p>
+												<p> <a href="/login"> Click here to login </a> using your password. </p>
+												<p> If you forgot your password, <a to="/resetpassword"> click here </a> to reset your password. </p>
 				
 											</div>						
 
@@ -99,7 +98,7 @@ module.exports = React.createClass({
 												</div>
 												<div className="uk-width-7-10">
 													<div className="uk-width-1-1 uk-text-right uk-text-bottom">
-														Already have an account? <Link className="uk-link uk-text-nowrap" to="/login">Login here</Link>
+														Already have an account? <a className="uk-link uk-text-nowrap" href="/login">Login here</a>
 													</div>
 												</div>
 											</div>

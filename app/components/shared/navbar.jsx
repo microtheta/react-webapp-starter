@@ -206,10 +206,10 @@ module.exports = React.createClass({
 						<div className="uk-navbar-flip">
 							<ul className="uk-navbar-nav">
 								<li className={ (this.props.currentmenu == 'login' ? 'uk-active' : '')}>
-									<Link to='/login'> LOGIN </Link>
+									<a href='/login'> LOGIN </a>
 								</li>
 								<li className={ (this.props.currentmenu == 'signup' ? 'uk-active' : '')}>
-									<Link to='/signup'> CREATE AN ACCOUNT </Link>
+									<a href='/signup'> CREATE AN ACCOUNT </a>
 								</li>
 							</ul>
 						</div>

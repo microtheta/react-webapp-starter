@@ -146,8 +146,6 @@ exports.activateAccount = function (req, res, next) {
 
 				user.activateAccount(credentialsObj.userId).then(function(affectedRows) {
 
-					console.log(affectedRows);
-
 					if(affectedRows) {
 
 						user.findById(credentialsObj.userId).then(function(userObj) {

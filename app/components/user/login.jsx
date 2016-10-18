@@ -1,7 +1,6 @@
 'use strict';
 
 var React = require('react');
-var Link = require('react-router').Link;
 var NavBar = require('../shared/navbar');
 
 module.exports = React.createClass({
@@ -9,9 +8,9 @@ module.exports = React.createClass({
 
 	render: function render() {
 		return (
-		 	<div className="uk-text-center">
-		 		
-		 		<NavBar currentmenu="login" />
+			<div className="uk-text-center">
+				
+				<NavBar currentmenu="login" />
 
 				<div className="uk-container uk-container-center uk-animation-fade uk-margin-large-top">
 
@@ -57,9 +56,7 @@ module.exports = React.createClass({
 									<button type="submit" className="uk-width-1-1 uk-button uk-button-primary uk-button-large">Login</button>
 								</div>
 								<div className="uk-form-row uk-text-small uk-vertical-align-middle">
-									<Link className="uk-float-right uk-link uk-link-muted" to="/resetpassword">Forgot Password?</Link>
-									{/* Or 
-									<Link className="uk-float-right uk-link uk-link-muted" to="/signup">Create An Account</Link> */}
+									<a className="uk-float-right uk-link uk-link-muted" href="/resetpassword">Forgot Password?</a>
 								</div>
 							</form>
 
