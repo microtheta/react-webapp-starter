@@ -18,6 +18,7 @@ module.exports = function(sequelize, DataTypes) {
 			defaultValue: false
 		},
 		email: {
+			unique: true,
 			type: DataTypes.STRING
 		},
 		isEmailVerified: {

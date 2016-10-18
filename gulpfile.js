@@ -95,16 +95,18 @@ gulp.task('nodemon', ['watch', 'buildlib'], function (cb) {
 		ext: 'js jsx',
 		stdout: false,
 		ignore: ['app/components'] // as build will be triggred while changing this files and node will be restarted due to build file changes ;)
-	}).on('restart', function(){
-		notifier.notify({
-			'title': 'script Building',
-			'message': 'Server restarting!',
-			'time': 1000
-		});
+	}).on('restart', function() {
+		
 	}).on('readable', function(data) {
         this.stdout.on('data', function(chunk) {
             if (/Express server listening/.test(chunk)) {
-                console.log('livereload');
+               
+                notifier.notify({
+					'title': 'script Building',
+					'message': 'Server restarted!',
+					'time': 500
+				});
+
                 livereload.reload();
             }
             process.stdout.write(chunk);

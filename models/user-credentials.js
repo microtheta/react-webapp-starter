@@ -1,6 +1,6 @@
 'use strict';
 module.exports = function(sequelize, DataTypes) {
-	var UserPass = sequelize.define('UserPassword', {
+	var UserPass = sequelize.define('UserCredentials', {
 		id: {
 			allowNull: false,
 			autoIncrement: true,
@@ -9,6 +9,7 @@ module.exports = function(sequelize, DataTypes) {
 		},
 		userId: {
 			type: DataTypes.INTEGER,
+			unique: true,
 			references: {
 				model: 'Users',
 				key: 'id'
@@ -19,6 +20,13 @@ module.exports = function(sequelize, DataTypes) {
 		password: {
 			type: DataTypes.STRING
 		},
+		activationToken: {
+			type: DataTypes.STRING
+		},
+		activationTokenExpired: {
+			type: DataTypes.BOOLEAN,
+			defaultValue: false
+		}/*,
 		createdAt: {
 			allowNull: false,
 			type: DataTypes.DATE
@@ -26,9 +34,9 @@ module.exports = function(sequelize, DataTypes) {
 		updatedAt: {
 			allowNull: false,
 			type: DataTypes.DATE
-		}
+		}*/
 	}, {
-		tableName: 'UserPassword',
+		tableName: 'UserCredentials',
 	});
 	return UserPass;
 };

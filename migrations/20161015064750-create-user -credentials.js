@@ -1,7 +1,7 @@
 'use strict';
 module.exports = {
   up: function(queryInterface, Sequelize) {
-    return queryInterface.createTable('UserPassword', {
+    return queryInterface.createTable('UserCredentials', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -21,6 +21,13 @@ module.exports = {
         onUpdate: 'cascade',
         onDelete: 'cascade'
       },
+      activationToken: {
+        type: Sequelize.STRING
+      },
+      activationTokenExpired: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
@@ -32,6 +39,6 @@ module.exports = {
     });
   },
   down: function(queryInterface, Sequelize) {
-    return queryInterface.dropTable('UserPassword');
+    return queryInterface.dropTable('UserCredentials');
   }
 };

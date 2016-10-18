@@ -4,6 +4,7 @@ const auth = require('./auth');
 const user = require(global.BASE_PATH + '/app/dao/user.dao');
 const mailHelper = require(global.BASE_PATH + '/app/server/utils/mailhelper');
 const bcrypt = require('bcrypt');
+const crypto = require('crypto');
 const saltRounds = 10;
 
 exports.postLogin = function(req, res, next) {
@@ -72,11 +73,11 @@ exports.postSignup = function(req, res, next) {
 	req.checkBody(userValidatorSchema);
 	let errors = req.validationErrors();
 	if (errors) {
-		res.status(400).render(req.url, {signuperrors: errors});
+		res.status(400).render(req.url, {signuperrors: errors, reqBody: req.body});
 		return;
 	}
 	if (req.body.password !== req.body.confirmpassword) {
-		res.status(400).render(req.url, {signuperrors: [{'param':'password', 'msg': 'Password and Confirm password is not matching'}] });
+		res.status(400).render(req.url, {reqBody: req.body, signuperrors: [{'param':'password', 'msg': 'Password and Confirm password is not matching'}] });
 		return;
 	}
 	var userObj = {
@@ -85,29 +86,84 @@ exports.postSignup = function(req, res, next) {
 		email: req.body.email
 	};
 
-	bcrypt.hash(req.body.password, saltRounds, function(err, hash) {
+	user.findByEmail(userObj.email).then(function (existingUser) {
 
-		user.create(userObj).then(function (newUser) {
-			var passwordObj = {
-				userId: newUser.id,
-				password: hash
-			};
+		if(!existingUser) {
 
-			user.savePassword(passwordObj).then(function() {
-				/* TODO Send activation Mail */
-				userObj.emailVerificationLink = 'test';
-				mailHelper.sendHtmlMail('usersignup', userObj, 'Welcome To Microtheta! Confirm Your Email', newUser.email);
-				res.render(req.url, {email: newUser.email});
+			bcrypt.hash(req.body.password, saltRounds, function(err, hash) {
+
+				user.create(userObj).then(function (newUser) {
+
+					crypto.randomBytes(16, (err, buf) => {
+
+						const token = buf.toString('hex');
+						
+
+						var credentialsObj = {
+							userId: newUser.id,
+							password: hash,
+							activationToken: token
+						};
+
+						user.saveCredentials(credentialsObj).then(function() {
+							userObj.emailVerificationLink = req.protocol + "://" + req.get('host')+'/user/account/'+newUser.id+'/activate?token=' + token;
+							mailHelper.sendHtmlMail('usersignup', userObj, 'Welcome To Microtheta! Confirm Your Email', newUser.email);
+							res.render(req.url, {email: newUser.email});
+						});
+					});
+
+					/*req.logIn(user, function() {
+						res.redirect(req.session.returnTo || '/');
+					});*/
+
+				});
+
 			});
 
-			/*req.logIn(user, function() {
-				res.redirect(req.session.returnTo || '/');
-			});*/
-
-		});
+		}
+		else {
+			res.status(400).render(req.url, {reqBody: req.body, existingUser: true});
+		}
 
 	});
 
+};
+
+exports.activateAccount = function (req, res, next) {
+	if(req.params.userId && req.query.token) {
+		user.validateActivationToken(req.query.token, req.params.userId).then(function(credentialsObj) {
+			if(credentialsObj) {
+
+				user.activateAccount(credentialsObj.userId).then(function(affectedRows) {
+
+					console.log(affectedRows);
+
+					if(affectedRows) {
+
+						user.findById(credentialsObj.userId).then(function(userObj) {
+
+							req.logIn(userObj, function() {
+								res.redirect('/');
+							});
+
+						});
+
+					}
+					else {
+						res.send('Something went wrong!');
+					}
+
+				});
+
+			}
+			else {
+				res.send('Activation token is expired or link is invalid.');
+			}
+		});	
+	}
+	else {
+		res.redirect('/login');
+	}
 };
 
 exports.logout = function(req, res) {

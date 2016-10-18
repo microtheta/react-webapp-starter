@@ -1,6 +1,7 @@
 'use strict';
 
 var React = require('react');
+var Link = require('react-router').Link;
 var NavBar = require('../shared/navbar');
 var If = require('../shared/if');
 
@@ -33,6 +34,23 @@ module.exports = React.createClass({
 									</div> : ''
 								}
 
+								{
+									this.props.existingUser ?
+										<div className="uk-width-medium-1-1 uk-container-center">
+
+											<div className="uk-alert uk-alert-large uk-alert-primary">
+
+												<h2> Email address already in use </h2>
+
+												<p> An existing account is already associated with the email address you have entered. </p>
+												<p> <Link to="/login"> Click here to login </Link> using your password. </p>
+												<p> If you forgot your password, <Link to="/resetpassword"> click here </Link> to reset your password. </p>
+				
+											</div>						
+
+										</div> : ''
+								}
+
 								<div className="uk-panel uk-panel-header">
 
 									<h2> Sign up </h2>
@@ -43,10 +61,10 @@ module.exports = React.createClass({
 											{ /* <label className="uk-form-label">Your Name</label> */ }
 											<div className="uk-form-controls uk-grid uk-grid-small">
 												<div className="uk-width-1-2">
-													<input autoFocus type="text" placeholder="First Name" name="firstName" className="uk-width-1-1 uk-form-large" />
+													<input autoFocus type="text" placeholder="First Name" name="firstName" className="uk-width-1-1 uk-form-large" defaultValue={this.props.reqBody && this.props.reqBody.firstName} required/>
 												</div>
 												<div className="uk-width-1-2">
-													<input type="text" placeholder="Last Name" name="lastName" className="uk-width-1-1 uk-form-large" />
+													<input type="text" placeholder="Last Name" name="lastName" className="uk-width-1-1 uk-form-large" defaultValue={this.props.reqBody && this.props.reqBody.lastName} required />
 												</div>
 											</div>
 										</div>
@@ -54,29 +72,36 @@ module.exports = React.createClass({
 										<div className="uk-form-row">
 											{ /* <label className="uk-form-label">Your Email</label> */ }
 											<div className="uk-form-controls">
-												<input type="text" placeholder="Email address" name="email" className="uk-width-1-1 uk-form-large" />
+												<input type="email" placeholder="Email address" name="email" className="uk-width-1-1 uk-form-large" defaultValue={this.props.reqBody && this.props.reqBody.email} required />
 											</div>
 										</div>
 
 										<div className="uk-form-row">
 											{ /* <label className="uk-form-label">Choose Password</label> */ }
 											<div className="uk-form-controls">
-												<input type="text" placeholder="New password" name="password" className="uk-width-1-1 uk-form-large" />
+												<input type="password" placeholder="New password" name="password" className="uk-width-1-1 uk-form-large" required />
 											</div>
 										</div>
 
 										<div className="uk-form-row">
 											{ /* <label className="uk-form-label">Choose Password</label> */ }
 											<div className="uk-form-controls">
-												<input type="text" placeholder="Confirm password" name="confirmpassword"  className="uk-width-1-1 uk-form-large" />
+												<input type="password" placeholder="Confirm password" name="confirmpassword"  className="uk-width-1-1 uk-form-large" required />
 											</div>
 										</div>
 
 										<div className="uk-form-row">
-											<div className="uk-form-controls">
-												<button type="submit" className="uk-width-2-10 uk-button uk-button-primary uk-button-large">
-												Submit
-												</button>
+											<div className="uk-form-controls uk-grid uk-grid-small">
+												<div className="uk-width-3-10">
+													<button type="submit" className="uk-width-1-1 uk-button uk-button-primary uk-button-large">
+													Submit
+													</button>
+												</div>
+												<div className="uk-width-7-10">
+													<div className="uk-width-1-1 uk-text-right uk-text-bottom">
+														Already have an account? <Link className="uk-link uk-text-nowrap" to="/login">Login here</Link>
+													</div>
+												</div>
 											</div>
 										</div>
 

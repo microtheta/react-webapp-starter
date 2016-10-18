@@ -3,22 +3,58 @@
 const models = require(global.BASE_PATH+'/models');
 
 var Users = models.Users;
-var UserPass = models.UserPassword;
+var UserCredentials = models.UserCredentials;
 
 exports.create = function(userObj) {
 	return Users.build(userObj).save();
 };
 
-exports.savePassword = function(user) {
-	return UserPass.build(user).save();
+exports.saveCredentials = function(user) {
+	return UserCredentials.upsert(user);
 };
 
 exports.getPassword = function(userid) {
-	return UserPass.findOne({
+	return UserCredentials.findOne({
 		where: {
 			userId: userid
 		}
 	});
+};
+
+exports.validateActivationToken = function(token, userid) {
+	return UserCredentials.findOne({
+		where: {
+			activationToken: token,
+			userId: userid,
+			activationTokenExpired: false
+		}
+	});
+};
+
+exports.activateAccount = function(userid) {
+	var updateUsers = Users.update({
+		isEmailVerified:true,
+		isActive: true
+	},
+	{
+		where:{
+			id:userid
+		}
+	});
+
+	updateUsers.then(function() {
+		UserCredentials.update({
+			activationTokenExpired:true
+		},
+		{
+			where:{
+				userId:userid
+			}
+		});
+	});
+
+	return updateUsers;
+
 };
 
 exports.findById = function(id) {

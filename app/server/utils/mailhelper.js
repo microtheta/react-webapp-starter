@@ -6,6 +6,9 @@ var client = nodemailer.createTransport({
   auth: {
     user: 'no-reply@microtheta.com',
     pass: 'micro@theta#1'
+  },
+  tls: {
+      rejectUnauthorized: false
   }
 });
 
@@ -44,6 +47,7 @@ var sendMail = function(subject, body, to, cc, bcc, cb ) {
     }
   });
 };
+
 
 module.exports = {
   sendHtmlMail,

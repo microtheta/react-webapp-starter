@@ -12,9 +12,9 @@ const userController = require('./user/user.controller');
 router.post("/login", userController.postLogin);
 router.post("/signup", userController.postSignup);
 router.get("/logout", userController.logout);
+router.get("/user/account/:userId/activate", userController.activateAccount);
+
 router.get("/user", auth.isAuthenticated, userController.getUser);
-
-
 
 
 

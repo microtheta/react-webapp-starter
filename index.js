@@ -90,6 +90,7 @@ app.set('view', require('react-engine/lib/expressView'));
 
 
 // allow accessing static content put under the public dir
+app.use('/favicon.ico',  express.static(path.join(__dirname, './favicon.ico')));
 app.use('/public', express.static(path.join(__dirname, './public')));
 app.use('/bower_components', express.static(path.join(__dirname, './bower_components')));
 // auto generated build files 
