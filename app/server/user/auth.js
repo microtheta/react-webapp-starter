@@ -30,6 +30,12 @@ passport.use(new LocalStrategy({ usernameField: 'email' }, (email, password, don
 		if(!userObj) {
 			return done(null, false, { msg: 'Invalid email or password.' });
 		}
+		if(!userObj.isEmailVerified) {
+			return done(null, false, { notverified: true });
+		}
+		if(!userObj.inactive) {
+			return done(null, false, { inactive: true });
+		}
 		user.getPassword(userObj.id).then(function(userPass) {
 			bcrypt.compare(password, userPass.password, function(err, isMatch) {
 
@@ -43,12 +49,12 @@ passport.use(new LocalStrategy({ usernameField: 'email' }, (email, password, don
 		});
 	})
 	.catch(function () {
-		return done(null, false, { msg: 'Something went wrong! Please get in touch with us at: '+constants.SUPPORTEMAIL });
+		return done(null, false, { msg: 'Something went wrong! Please get in touch with us at: '+ constants.SUPPORTEMAIL });
 	});
 
 }));
 
-module.exports =  {
+module.exports = {
 	initialize: function(app) {
 		app.use(passport.initialize());
 		app.use(passport.session());

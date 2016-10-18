@@ -32,7 +32,17 @@ exports.postLogin = function(req, res, next) {
 		if (err) { return next(err); }
 		
 		if (!user) {
-			return res.status(400).render(req.url, {loginerrors: [info]});
+			
+			var errObj = { loginerrors: [info] };
+
+			if(info.notverified) {
+				errObj = { notverified: true };
+			}
+			if(info.inactive) {
+				errObj = { inactive: true };
+			}
+
+			return res.status(400).render(req.url, errObj);
 		}
 
 		req.logIn(user, function(err) {
