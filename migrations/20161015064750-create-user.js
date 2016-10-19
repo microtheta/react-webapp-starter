@@ -16,7 +16,7 @@ module.exports = {
       },
       isActive: {
         type: Sequelize.BOOLEAN,
-        defaultValue: false
+        defaultValue: true
       },
       email: {
         type: Sequelize.STRING

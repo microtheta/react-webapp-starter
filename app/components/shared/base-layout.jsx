@@ -24,7 +24,9 @@ module.exports = React.createClass({
 					{this.props.children}
 
 					<script src="/build/lib.min.js"></script>
-					<script src="/build/app.js"></script>
+
+					{!this.props.excludeClientApp ? <script src="/build/app.js"></script> : null }
+
 				</body>
 			</html>
 		)

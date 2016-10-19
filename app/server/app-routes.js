@@ -7,12 +7,15 @@ const auth = require('./user/auth');
 const userController = require('./user/user.controller');
 
 
-
-//api routes
 router.post("/login", userController.postLogin);
 router.post("/signup", userController.postSignup);
 router.get("/logout", userController.logout);
 router.get("/user/account/:userId/activate", userController.activateAccount);
+router.get("/user/account/:userId/setpassword", userController.setUserPassword);
+
+//api routes
+router.post("/api/activationmail", userController.resendActivationMail);
+
 
 router.get("/user", auth.isAuthenticated, userController.getUser);
 
@@ -27,6 +30,9 @@ router.get("/signup", function(request, response, next) {
 	response.render(request.url);
 });
 router.get("/login", function(request, response, next) {
+	response.render(request.url);
+});
+router.get("/resetpassword", function(request, response, next) {
 	response.render(request.url);
 });
 

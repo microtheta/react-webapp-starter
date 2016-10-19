@@ -30,14 +30,17 @@ passport.use(new LocalStrategy({ usernameField: 'email' }, (email, password, don
 		if(!userObj) {
 			return done(null, false, { msg: 'Invalid email or password.' });
 		}
-		if(!userObj.isEmailVerified) {
-			return done(null, false, { notverified: true });
-		}
-		if(!userObj.inactive) {
-			return done(null, false, { inactive: true });
-		}
+		
 		user.getPassword(userObj.id).then(function(userPass) {
 			bcrypt.compare(password, userPass.password, function(err, isMatch) {
+
+				if(!userObj.isEmailVerified) {
+					return done(null, false, { notverified: true });
+				}
+
+				if(!userObj.isActive) {
+					return done(null, false, { inactive: true });
+				}
 
 				if(isMatch) {
 					return done(null, userObj);

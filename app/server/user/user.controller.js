@@ -24,7 +24,7 @@ exports.postLogin = function(req, res, next) {
 	req.checkBody(validatorSchema);
 	let errors = req.validationErrors();
 	if (errors) {
-		return res.status(400).render(req.url, {loginerrors: errors});
+		return res.status(400).render(req.url, {loginerrors: errors, reqBody: req.body});
 	}
 	
 
@@ -33,16 +33,18 @@ exports.postLogin = function(req, res, next) {
 		
 		if (!user) {
 			
-			var errObj = { loginerrors: [info] };
+			var dataObj = { loginerrors: [info] };
 
 			if(info.notverified) {
-				errObj = { notverified: true };
+				dataObj = { notverified: true };
 			}
 			if(info.inactive) {
-				errObj = { inactive: true };
+				dataObj = { inactive: true };
 			}
 
-			return res.status(400).render(req.url, errObj);
+			dataObj.reqBody = req.body;
+
+			return res.status(400).render(req.url, dataObj);
 		}
 
 		req.logIn(user, function(err) {
@@ -172,6 +174,40 @@ exports.activateAccount = function (req, res, next) {
 	else {
 		res.redirect('/login');
 	}
+};
+
+exports.resendActivationMail = function(req, res) {
+	var userEmail = req.body.email;
+	user.findByEmail(userEmail).then(function (existingUser) {
+
+		if(existingUser) {
+
+			user.getPassword(existingUser.id).then(function(passwordObj) {
+				if(passwordObj && !passwordObj.activationTokenExpired) {
+
+					var userObj = {
+						firstName: existingUser.firstName,
+						emailVerificationLink: req.protocol + "://" + req.get('host')+'/user/account/'+existingUser.id+'/activate?token=' + passwordObj.activationToken
+					}
+					
+					mailHelper.sendHtmlMail('usersignup', userObj, 'Welcome To Microtheta! Confirm Your Email', existingUser.email);
+					
+					res.send({'success':true});
+				}
+				else {
+					res.status(400).send({'success':false,'msg':'token expired or not found'});		
+				}
+				
+			}); 
+		}
+		else {
+			res.status(400).send({'success':false,'msg':'User not found'});
+		}
+	});
+};
+
+exports.setUserPassword = function (req, res) {
+	res.render(global.BASE_PATH + '/app/components/user/resetpassword');
 };
 
 exports.logout = function(req, res) {
