@@ -9,9 +9,11 @@ const userController = require('./user/user.controller');
 
 router.post("/login", userController.postLogin);
 router.post("/signup", userController.postSignup);
+router.post("/forgotpassword", userController.postForgotPassword);
 router.get("/logout", userController.logout);
-router.get("/user/account/:userId/activate", userController.activateAccount);
-router.get("/user/account/:userId/setpassword", userController.setUserPassword);
+router.get("/user/account/:userId/activate", userController.activateAccount); //link sent to email
+router.get("/user/account/:userId/setpassword", userController.getsetUserPassword); //link sent to email
+router.post("/user/account/:userId/setpassword", userController.postsetUserPassword);
 
 //api routes
 router.post("/api/activationmail", userController.resendActivationMail);
@@ -32,7 +34,7 @@ router.get("/signup", function(request, response, next) {
 router.get("/login", function(request, response, next) {
 	response.render(request.url);
 });
-router.get("/resetpassword", function(request, response, next) {
+router.get("/forgotpassword", function(request, response, next) {
 	response.render(request.url);
 });
 

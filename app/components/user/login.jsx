@@ -110,7 +110,7 @@ module.exports = React.createClass({
 									<button type="submit" className="uk-width-1-1 uk-button uk-button-primary uk-button-large">Login</button>
 								</div>
 								<div className="uk-form-row uk-text-small uk-vertical-align-middle">
-									<a className="uk-float-right uk-link uk-link-muted" href="/resetpassword">Forgot Password?</a>
+									<a className="uk-float-right uk-link uk-link-muted" href="/forgotpassword">Forgot Password?</a>
 								</div>
 							</form>
 

@@ -206,8 +206,27 @@ exports.resendActivationMail = function(req, res) {
 	});
 };
 
-exports.setUserPassword = function (req, res) {
+exports.postForgotPassword = function(req, res) {
+	/* TODO: Create reset password token and send a mail */
+	res.render(req.url, {errors: 'Work in progress'});
+};
+
+exports.getsetUserPassword = function (req, res) {
+	res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+	res.header('Expires', '-1');
+	res.header('Pragma', 'no-cache');
+	/* TODO: check if password token is not expired(used) and render password reset form */
 	res.render(global.BASE_PATH + '/app/components/user/resetpassword');
+};
+
+exports.postsetUserPassword = function (req, res) {
+	
+	res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+	res.header('Expires', '-1');
+	res.header('Pragma', 'no-cache');
+
+	/* TODO: set new password, mark token as expired and inform user about password sucess */
+	res.render(global.BASE_PATH + '/app/components/user/resetpassword', {success:true});
 };
 
 exports.logout = function(req, res) {

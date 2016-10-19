@@ -6,7 +6,7 @@ import PostLogin from './shared/post-login';
 
 import LoginPage from './user/login';
 import SignUpPage from './user/signup';
-import ResetPassword from './user/resetpassword';
+import ForgotPassword from './user/forgotpassword';
 
 import Greed from './greed/greed';
 
@@ -24,7 +24,7 @@ module.exports = (
 			<Route component={PreLogin}>
 				<Route path='/login' component={LoginPage} />
 				<Route path='/signup' component={SignUpPage} />
-				<Route path='/resetpassword' component={ResetPassword} />
+				<Route path='/forgotpassword' component={ForgotPassword} />
 			</Route>
 			
 		</Route>
