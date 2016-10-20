@@ -7,54 +7,6 @@ const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const saltRounds = 10;
 
-exports.postLogin = function(req, res, next) {
-
-	let validatorSchema = {
-		'email': {
-			isEmail: {
-				errorMessage: 'Invalid Email'
-			}
-		},
-		'password': {
-			notEmpty: true,
-			errorMessage: 'Password Required'
-		}
-	};
-
-	req.checkBody(validatorSchema);
-	let errors = req.validationErrors();
-	if (errors) {
-		return res.status(400).render(req.url, {loginerrors: errors, reqBody: req.body});
-	}
-	
-
-	auth.localAuthenticate(req, res, next, function(err, user, info) {
-		if (err) { return next(err); }
-		
-		if (!user) {
-			
-			var dataObj = { loginerrors: [info] };
-
-			if(info.notverified) {
-				dataObj = { notverified: true };
-			}
-			if(info.inactive) {
-				dataObj = { inactive: true };
-			}
-
-			dataObj.reqBody = req.body;
-
-			return res.status(400).render(req.url, dataObj);
-		}
-
-		req.logIn(user, function(err) {
-			if (err) { return next(err); }
-			res.redirect(req.session.returnTo || '/');
-		});
-	});
-	
-};
-
 exports.postSignup = function(req, res, next) {
 
 	let userValidatorSchema = {
@@ -123,27 +75,22 @@ exports.postSignup = function(req, res, next) {
 							res.render(req.url, {email: newUser.email});
 						});
 					});
-
 					/*req.logIn(user, function() {
 						res.redirect(req.session.returnTo || '/');
 					});*/
-
 				});
-
 			});
-
 		}
 		else {
 			res.status(400).render(req.url, {reqBody: req.body, existingUser: true});
 		}
-
 	});
-
 };
 
 exports.activateAccount = function (req, res, next) {
 	if(req.params.userId && req.query.token) {
 		user.validateActivationToken(req.query.token, req.params.userId).then(function(credentialsObj) {
+			
 			if(credentialsObj) {
 
 				user.activateAccount(credentialsObj.userId).then(function(affectedRows) {
@@ -155,16 +102,12 @@ exports.activateAccount = function (req, res, next) {
 							req.logIn(userObj, function() {
 								res.redirect('/');
 							});
-
 						});
-
 					}
 					else {
 						res.send('Something went wrong!');
 					}
-
 				});
-
 			}
 			else {
 				res.send('Activation token is expired or link is invalid.');
@@ -176,38 +119,94 @@ exports.activateAccount = function (req, res, next) {
 	}
 };
 
-exports.resendActivationMail = function(req, res) {
-	var userEmail = req.body.email;
-	user.findByEmail(userEmail).then(function (existingUser) {
+exports.postLogin = function(req, res, next) {
 
-		if(existingUser) {
-
-			user.getPassword(existingUser.id).then(function(passwordObj) {
-				if(passwordObj && !passwordObj.activationTokenExpired) {
-
-					var userObj = {
-						firstName: existingUser.firstName,
-						emailVerificationLink: req.protocol + "://" + req.get('host')+'/user/account/'+existingUser.id+'/activate?token=' + passwordObj.activationToken
-					}
-					
-					mailHelper.sendHtmlMail('usersignup', userObj, 'Welcome To Microtheta! Confirm Your Email', existingUser.email);
-					
-					res.send({'success':true});
-				}
-				else {
-					res.status(400).send({'success':false,'msg':'token expired or not found'});		
-				}
-				
-			}); 
+	let validatorSchema = {
+		'email': {
+			isEmail: {
+				errorMessage: 'Invalid Email'
+			}
+		},
+		'password': {
+			notEmpty: true,
+			errorMessage: 'Password Required'
 		}
-		else {
-			res.status(400).send({'success':false,'msg':'User not found'});
+	};
+
+	req.checkBody(validatorSchema);
+	let errors = req.validationErrors();
+	if (errors) {
+		return res.status(400).render(req.url, {loginerrors: errors, reqBody: req.body});
+	}
+	
+	auth.localAuthenticate(req, res, next, function(err, user, info) {
+
+		if (err) { res.status(500).send(); }
+		
+		if (!user) {
+			
+			var dataObj = { loginerrors: [info] };
+
+			if(info.notverified) {
+				dataObj = { notverified: true };
+			}
+			if(info.inactive) {
+				dataObj = { inactive: true };
+			}
+
+			dataObj.reqBody = req.body;
+
+			return res.status(400).render(req.url, dataObj);
 		}
+
+		req.logIn(user, function(err) {
+			if (err) { return next(err); }
+			res.redirect(req.session.returnTo || '/');
+		});
 	});
 };
 
+exports.resendActivationMail = function(req, res) {
+	
+	if(req.body.email) {
+
+		var userEmail = req.body.email;
+
+		user.findByEmail(userEmail).then(function (existingUser) {
+
+			if(existingUser) {
+
+				user.getPassword(existingUser.id).then(function(passwordObj) {
+					if(passwordObj && !passwordObj.activationTokenExpired) {
+
+						var userObj = {
+							firstName: existingUser.firstName,
+							emailVerificationLink: req.protocol + "://" + req.get('host')+'/user/account/'+existingUser.id+'/activate?token=' + passwordObj.activationToken
+						}
+						
+						mailHelper.sendHtmlMail('usersignup', userObj, 'Welcome To Microtheta! Confirm Your Email', existingUser.email);
+						
+						res.send({'success':true});
+					}
+					else {
+						res.status(400).send({'success':false,'msg':'token expired or not found'});		
+					}
+				}); 
+			}
+			else {
+				res.status(400).send({'success':false,'msg':'User not found'});
+			}
+		});
+	}
+	else {
+		return res.status(400).send({'success':false,'msg':'Email not found'});
+	}
+};
+
 exports.postForgotPassword = function(req, res) {
-	/* Create reset password token and send a mail */
+
+	/* Create  passwordresettoken and send a mail */
+
 	req.checkBody('email', 'Invalid email address').notEmpty().isEmail();
 	var errors = req.validationErrors();
 	if(errors) {
@@ -220,7 +219,6 @@ exports.postForgotPassword = function(req, res) {
 
 				const token = buf.toString('hex');
 				
-
 				var tempPasswordObj = {
 					userId: existingUser.id,
 					passwordResetToken: token,
