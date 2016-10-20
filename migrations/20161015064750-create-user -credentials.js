@@ -24,17 +24,36 @@ module.exports = {
       activationToken: {
         type: Sequelize.STRING
       },
+      activationCreatedAt: {
+        allowNull: false,
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+      },
       activationTokenExpired: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false
+      },
+      passwordResetToken: {
+        type: Sequelize.STRING
+      },
+      passwordResetTokenCreatedAt: {
+        allowNull: false,
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+      },
+      passwordResetTokenExpired: {
         type: Sequelize.BOOLEAN,
         defaultValue: false
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
       }
     });
   },

@@ -19,6 +19,7 @@ module.exports = {
         defaultValue: true
       },
       email: {
+        allowNull: false,
         type: Sequelize.STRING
       },
       isEmailVerified: {
@@ -27,11 +28,13 @@ module.exports = {
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
       }
     });
   },

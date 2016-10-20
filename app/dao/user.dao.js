@@ -31,6 +31,17 @@ exports.validateActivationToken = function(token, userid) {
 	});
 };
 
+exports.validatePasswordResetToken = function(token, userid) {
+	return UserCredentials.findOne({
+		where: {
+			passwordResetToken: token,
+			userId: userid,
+			passwordResetTokenExpired: false
+		}
+	});
+};
+
+
 exports.activateAccount = function(userid) {
 	var updateUsers = Users.update({
 		isEmailVerified:true,

@@ -207,16 +207,58 @@ exports.resendActivationMail = function(req, res) {
 };
 
 exports.postForgotPassword = function(req, res) {
-	/* TODO: Create reset password token and send a mail */
-	res.render(req.url, {errors: 'Work in progress'});
+	/* Create reset password token and send a mail */
+	req.checkBody('email', 'Invalid email address').notEmpty().isEmail();
+	var errors = req.validationErrors();
+	if(errors) {
+		return res.status(400).render(req.url, {errors: errors});
+	}
+	user.findByEmail(req.body.email).then(function (existingUser) {
+		if(existingUser) {
+
+			crypto.randomBytes(16, (err, buf) => {
+
+				const token = buf.toString('hex');
+				
+
+				var tempPasswordObj = {
+					userId: existingUser.id,
+					passwordResetToken: token,
+				};
+
+				user.saveCredentials(tempPasswordObj).then(function() {
+
+					tempPasswordObj.firstName = existingUser.firstName;
+					tempPasswordObj.emailVerificationLink = req.protocol + "://" + req.get('host')+'/user/account/'+existingUser.id+'/setpassword?token=' + token;
+					mailHelper.sendHtmlMail('passwordreset', tempPasswordObj, 'Microtheta - Password Reset', existingUser.email);
+
+					res.render(req.url, {success: true, email:existingUser.email });
+				});
+			});
+		}
+		else {
+			res.status(400).render(req.url, {email: req.body.email, errors: [{msg: 'Email address not found. Please check your email address or sign up for a new account.'}]});
+		}
+	});
 };
 
 exports.getsetUserPassword = function (req, res) {
 	res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
 	res.header('Expires', '-1');
 	res.header('Pragma', 'no-cache');
-	/* TODO: check if password token is not expired(used) and render password reset form */
-	res.render(global.BASE_PATH + '/app/components/user/resetpassword');
+	/* check if password token is not expired(used) and render password reset form */
+	if(req.params.userId && req.query.token) {
+		user.validatePasswordResetToken(req.query.token, req.params.userId).then(function(credentialsObj) {
+			if(credentialsObj) {
+				res.render(global.BASE_PATH + '/app/components/user/resetpassword');
+			}
+			else {
+				res.status(400).send('Token is expired or link is invalid.');
+			}
+		});
+	} else {
+		res.redirect('/login');
+	}
 };
 
 exports.postsetUserPassword = function (req, res) {
@@ -224,9 +266,28 @@ exports.postsetUserPassword = function (req, res) {
 	res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
 	res.header('Expires', '-1');
 	res.header('Pragma', 'no-cache');
+	/* set new password, mark token as expired and inform user about password success */
 
-	/* TODO: set new password, mark token as expired and inform user about password sucess */
-	res.render(global.BASE_PATH + '/app/components/user/resetpassword', {success:true});
+	if(req.body.password === req.body.confirmpassword) {
+		user.validatePasswordResetToken(req.query.token, req.params.userId).then(function(credentialsObj) {
+			if(credentialsObj) {
+				bcrypt.hash(req.body.password, saltRounds, function(err, hash) {
+					credentialsObj.updateAttributes({
+						password: hash,
+						passwordResetTokenExpired: true
+					}).then(function() {
+						return res.render(global.BASE_PATH + '/app/components/user/resetpassword', {success:true});
+					});
+				});
+			}
+			else {
+				return res.status(400).send('Token is expired or link is invalid.');
+			}
+		});
+	}
+	else {
+		res.render(global.BASE_PATH + '/app/components/user/resetpassword', {errors:'Password and confirm Password is not matching.'});
+	}
 };
 
 exports.logout = function(req, res) {

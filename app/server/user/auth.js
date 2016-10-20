@@ -34,15 +34,16 @@ passport.use(new LocalStrategy({ usernameField: 'email' }, (email, password, don
 		user.getPassword(userObj.id).then(function(userPass) {
 			bcrypt.compare(password, userPass.password, function(err, isMatch) {
 
-				if(!userObj.isEmailVerified) {
-					return done(null, false, { notverified: true });
-				}
-
-				if(!userObj.isActive) {
-					return done(null, false, { inactive: true });
-				}
-
 				if(isMatch) {
+					
+					if(!userObj.isEmailVerified) {
+						return done(null, false, { notverified: true });
+					}
+
+					if(!userObj.isActive) {
+						return done(null, false, { inactive: true });
+					}
+
 					return done(null, userObj);
 				}
 				else { //password not matching
