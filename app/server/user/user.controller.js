@@ -7,7 +7,7 @@ const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const saltRounds = 10;
 
-exports.postSignup = function(req, res, next) {
+exports.postSignup = function(req, res) {
 
 	let userValidatorSchema = {
 		'firstName': {
@@ -87,7 +87,7 @@ exports.postSignup = function(req, res, next) {
 	});
 };
 
-exports.activateAccount = function (req, res, next) {
+exports.activateAccount = function (req, res) {
 	if(req.params.userId && req.query.token) {
 		user.validateActivationToken(req.query.token, req.params.userId).then(function(credentialsObj) {
 			
@@ -161,7 +161,7 @@ exports.postLogin = function(req, res, next) {
 
 		req.logIn(user, function(err) {
 			if (err) { return next(err); }
-			res.redirect(req.session.returnTo || '/');
+			res.redirect('/');
 		});
 	});
 };
@@ -222,6 +222,7 @@ exports.postForgotPassword = function(req, res) {
 				var tempPasswordObj = {
 					userId: existingUser.id,
 					passwordResetToken: token,
+					passwordResetTokenExpired: false /* TODO: update creation time */
 				};
 
 				user.saveCredentials(tempPasswordObj).then(function() {
@@ -248,7 +249,7 @@ exports.getsetUserPassword = function (req, res) {
 	if(req.params.userId && req.query.token) {
 		user.validatePasswordResetToken(req.query.token, req.params.userId).then(function(credentialsObj) {
 			if(credentialsObj) {
-				res.render(global.BASE_PATH + '/app/components/user/resetpassword');
+				res.render('./components/user/resetpassword');
 			}
 			else {
 				res.status(400).send('Token is expired or link is invalid.');
@@ -274,7 +275,7 @@ exports.postsetUserPassword = function (req, res) {
 						password: hash,
 						passwordResetTokenExpired: true
 					}).then(function() {
-						return res.render(global.BASE_PATH + '/app/components/user/resetpassword', {success:true});
+						return res.render('./components/user/resetpassword', {success:true});
 					});
 				});
 			}
@@ -284,7 +285,7 @@ exports.postsetUserPassword = function (req, res) {
 		});
 	}
 	else {
-		res.render(global.BASE_PATH + '/app/components/user/resetpassword', {errors:'Password and confirm Password is not matching.'});
+		res.render('./app/components/user/resetpassword', {errors:'Password and confirm Password is not matching.'});
 	}
 };
 
