@@ -108,7 +108,7 @@ app.use(errorHandler());
 /**
 	Express configuration.
 **/
-app.set('port', process.env.PORT || 9093);
+app.set('port', process.env.PORT || 9090);
 
 /**
 	Start Express server.

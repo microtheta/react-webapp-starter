@@ -1,11 +1,15 @@
 # Play ground app
 
-## Look for
+## Look here for
 
 - ReactJS / ES2015 Babel transpiler
 - ExpressJS : Node webapp framework
 - Isomorphic/Universal rendering using React-Router and React-Engine
-- Authentication using passport
+- Authentication using passport via email/password
+- User signup / login / forgotpassword / reset password
+- User email verification on signup
+- SQLite datastore / SquelizeJS as ORM
+- Mail sending using node-mailer with sendgrid
 - Front-End / CSS framework : UIKit
 - Build/Browserify using Gulp
 - Gulp-live-reload with nodemon
@@ -30,4 +34,4 @@
 
 start server using ```gulp```
 
-and visit  ```http://localhost:9093/```
+and visit  ```http://localhost:9090/```

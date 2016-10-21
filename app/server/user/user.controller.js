@@ -249,7 +249,7 @@ exports.getsetUserPassword = function (req, res) {
 	if(req.params.userId && req.query.token) {
 		user.validatePasswordResetToken(req.query.token, req.params.userId).then(function(credentialsObj) {
 			if(credentialsObj) {
-				res.render('./components/user/resetpassword');
+				res.render('./components/user/resetpassword'); //Example of react component rendering without react-router
 			}
 			else {
 				res.status(400).send('Token is expired or link is invalid.');
