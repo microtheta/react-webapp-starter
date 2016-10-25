@@ -4,7 +4,7 @@
   "description": "Application Project",
   "main": "index.js",
   "scripts": {
-    "test": ""
+     "start": "gulp build && node index.js"
   },
   "private": true,
   "repository": {

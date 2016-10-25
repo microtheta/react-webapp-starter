@@ -8,7 +8,7 @@
 - Authentication using passport via email/password
 - User signup / login / forgotpassword / reset password
 - User email verification on signup
-- SQLite datastore / SquelizeJS as ORM
+- SQLite datastore / Sequelize as ORM
 - Mail sending using node-mailer with sendgrid
 - Front-End / CSS framework : UIKit
 - Build/Browserify using Gulp

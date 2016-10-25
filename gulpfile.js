@@ -98,21 +98,21 @@ gulp.task('nodemon', ['watch', 'buildlib'], function (cb) {
 	}).on('restart', function() {
 		
 	}).on('readable', function(data) {
-        this.stdout.on('data', function(chunk) {
-            if (/Express server listening/.test(chunk)) {
-               
-                notifier.notify({
+		this.stdout.on('data', function(chunk) {
+			if (/Express server listening/.test(chunk)) {
+
+				notifier.notify({
 					'title': 'script Building',
 					'message': 'Server restarted!',
 					'time': 500
 				});
 
-                livereload.reload();
-            }
-            process.stdout.write(chunk);
-        });
-        this.stderr.pipe(process.stderr);
-    });
+				livereload.reload();
+			}
+			process.stdout.write(chunk);
+		});
+		this.stderr.pipe(process.stderr);
+	});
 });
 
 
