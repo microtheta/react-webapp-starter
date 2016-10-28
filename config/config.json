@@ -9,7 +9,7 @@
   "development": {
     "dialect": "sqlite",
     "host": "localhost",
-    "storage": "./db.development.sqlite"
+    "storage": "./db.development.sqlite.db"
   },
   "test": {
     "username": "root",

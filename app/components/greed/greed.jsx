@@ -1,6 +1,7 @@
 'use strict';
 
 var React = require('react');
+var $data = require('../utils/fetchdata');
 
 var NavBar = require('../shared/navbar');
 
@@ -8,10 +9,25 @@ var NavBar = require('../shared/navbar');
 module.exports = React.createClass({
 	displayName: 'GreedPage',
 
+	getInitialState: function(){
+		return {
+			user: this.props.user || {}
+		}
+	},
+
+	componentDidMount: function() {
+		var _this = this;
+		$data.get('/api/userdetails').then(function(data) {
+			_this.setState({
+				user: data
+			});
+		});
+	},
+
 	render: function render() {
 		return (
 			<div>
-				<NavBar user={this.props.user} />
+				<NavBar user={this.state.user} />
 				<div className="uk-container-center uk-container uk-margin-top uk-margin-bottom" >
 					<div className="uk-grid">
 						<div className="uk-width-small-1-1 uk-width-medium-2-10">
@@ -23,7 +39,7 @@ module.exports = React.createClass({
 
 								<h1 className="uk-article-title"> My Article Title </h1>
 
-								<p className="uk-article-meta">Written by {this.props.user.firstName} Super User on 12 April 2012. Posted in Blog</p>
+								<p className="uk-article-meta">Written by {this.state.user.firstName} Super User on 12 April 2012. Posted in Blog</p>
 
 								<p className="uk-article-lead">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor className ut labore et dolore magna aliqua.</p>
 

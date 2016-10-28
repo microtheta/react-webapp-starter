@@ -17,6 +17,7 @@ const dotenv = require('dotenv');
 const ReactEngine = require('react-engine');
 const compression = require('compression');
 const session = require('express-session');
+const SQLiteStore = require('connect-sqlite3')(session);
 const logger = require('morgan');
 const errorHandler = require('errorhandler');
 const expressValidator = require('express-validator');
@@ -36,7 +37,8 @@ app.use(compression());
 app.use(session({
 	resave: true,
 	saveUninitialized: true,
-	secret: process.env.SESSION_SECRET
+	secret: process.env.SESSION_SECRET,
+	store: new SQLiteStore({db: 'db.development.sqlite'})
 }));
 app.use(bodyParser.json());  // parse the request body and make it availabel as req.body
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -55,6 +57,8 @@ app.use(function(req, res, next) {
 		req.path !== '/login' &&
 		req.path !== '/signup' &&
 		!req.path.match(/^\/auth/) &&
+		!req.path.match(/^\/api/) &&
+		!req.path.match(/^\/user\/account/) &&
 		!req.path.match(/\./)) {
 		req.session.returnTo = req.path;
 	}

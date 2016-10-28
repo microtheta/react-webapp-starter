@@ -1,15 +1,74 @@
 'use strict';
 
 var React = require('react');
+var Link = require('react-router').Link;
+import { browserHistory } from 'react-router';
+
 var NavBar = require('../shared/navbar');
+var $data = require('../utils/fetchdata');
+
 
 module.exports = React.createClass({
 	displayName: 'LoginPage',
+
 	getInitialState: function() {
 		return {
-			newactivationMailSent : false
+			newactivationMailSent : false,
+			errors: null,
+			notverified: false,
+			inactive: false
 		}
 	},
+
+	handleSubmit: function(e){
+		e.preventDefault();
+
+		var _this = this;
+
+		$data.post('api/user/login', $(e.target).serialize())
+		.then(function(data) {
+			if(data.success) {
+				browserHistory.push(data.to);
+			}
+			else {
+				_this.setState({
+					unknownError: true
+				});
+			}
+		})
+		.catch(function(data) {
+			if(data.success === false) {
+				if(data.errors) {
+					_this.setState({
+						errors: data.errors
+					});
+				}
+				else if(data.notverified) {
+					_this.setState({
+						errors: null,
+						notverified: true
+					});
+				}
+				else if(data.inactive) {
+					_this.setState({
+						errors: null,
+						inactive: true
+					});
+				}
+				else {
+					_this.setState({
+						unknownError: true
+					});
+				}
+			}
+			else {
+				_this.setState({
+					unknownError: true
+				});
+			}
+		});
+	},
+
 	resendActivationMail: function() {
 		var _this = this;
 		
@@ -43,11 +102,11 @@ module.exports = React.createClass({
 
 						<div className="uk-width-medium-3-10 uk-container-center">
 
-							{ this.props.loginerrors ?
+							{ this.state.errors ?
 								<div className="uk-alert uk-alert-danger" data-uk-alert>
 									<a href="javascript:void(0)" className="uk-alert-close uk-close"></a>
 									{
-										this.props.loginerrors.map(function(err, i) {
+										this.state.errors.map(function(err, i) {
 											return <p key={i}> {err.msg} </p>
 										})
 									}
@@ -55,7 +114,7 @@ module.exports = React.createClass({
 							}
 
 							{
-								this.props.notverified ?
+								this.state.notverified ?
 
 									<div className="uk-alert uk-alert-warning" data-uk-alert>
 										<h2> Email is not verified. </h2>
@@ -91,7 +150,7 @@ module.exports = React.createClass({
 							}
 
 							{
-								this.props.inactive ?
+								this.state.inactive ?
 								<div className="uk-alert uk-alert-danger" data-uk-alert>
 									Account is not active.
 								</div> : ''
@@ -99,9 +158,9 @@ module.exports = React.createClass({
 
 							<img className="uk-margin-bottom" width="140" height="120" src="/public/images/logo.png" alt="" />
 
-							<form className="uk-panel uk-panel-box uk-form" action="/login" method="post" >
+							<form className="uk-panel uk-panel-box uk-form" onSubmit={this.handleSubmit} >
 								<div className="uk-form-row">
-									<input autoFocus className="uk-width-1-1 uk-form-large" type="email" placeholder="Email/Username" name="email" defaultValue={this.props.reqBody && this.props.reqBody.email} required />
+									<input autoFocus className="uk-width-1-1 uk-form-large" type="text" placeholder="Email/Username" name="email" defaultValue={this.props.reqBody && this.props.reqBody.email} required />
 								</div>
 								<div className="uk-form-row">
 									<input className="uk-width-1-1 uk-form-large" type="password" placeholder="Password" name="password"  required />
@@ -110,7 +169,7 @@ module.exports = React.createClass({
 									<button type="submit" className="uk-width-1-1 uk-button uk-button-primary uk-button-large">Login</button>
 								</div>
 								<div className="uk-form-row uk-text-small uk-vertical-align-middle">
-									<a className="uk-float-right uk-link uk-link-muted" href="/forgotpassword">Forgot Password?</a>
+									<Link className="uk-float-right uk-link uk-link-muted" to="/forgotpassword">Forgot Password?</Link>
 								</div>
 							</form>
 

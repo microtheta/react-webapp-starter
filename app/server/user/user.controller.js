@@ -37,11 +37,11 @@ exports.postSignup = function(req, res) {
 	req.checkBody(userValidatorSchema);
 	let errors = req.validationErrors();
 	if (errors) {
-		res.status(400).render(req.url, {signuperrors: errors, reqBody: req.body});
+		res.status(400).send({success: false, errors: errors}) //.render(req.url, {signuperrors: errors, reqBody: req.body});
 		return;
 	}
 	if (req.body.password !== req.body.confirmpassword) {
-		res.status(400).render(req.url, {reqBody: req.body, signuperrors: [{'param':'password', 'msg': 'Password and Confirm password is not matching'}] });
+		res.status(400).send({success: false, errors: [{'param':'password', 'msg': 'Password and Confirm password is not matching'}] });
 		return;
 	}
 	var userObj = {
@@ -72,7 +72,7 @@ exports.postSignup = function(req, res) {
 						user.saveCredentials(credentialsObj).then(function() {
 							userObj.emailVerificationLink = req.protocol + "://" + req.get('host')+'/user/account/'+newUser.id+'/activate?token=' + token;
 							mailHelper.sendHtmlMail('usersignup', userObj, 'Welcome To Microtheta! Confirm Your Email', newUser.email);
-							res.render(req.url, {email: newUser.email});
+							res.send({success: true, email: newUser.email});
 						});
 					});
 					/*req.logIn(user, function() {
@@ -82,7 +82,7 @@ exports.postSignup = function(req, res) {
 			});
 		}
 		else {
-			res.status(400).render(req.url, {reqBody: req.body, existingUser: true});
+			res.status(400).send({userExist: true});
 		}
 	});
 };
@@ -136,7 +136,7 @@ exports.postLogin = function(req, res, next) {
 	req.checkBody(validatorSchema);
 	let errors = req.validationErrors();
 	if (errors) {
-		return res.status(400).render(req.url, {loginerrors: errors, reqBody: req.body});
+		return res.status(400).send({success: false, errors: errors});
 	}
 	
 	auth.localAuthenticate(req, res, next, function(err, user, info) {
@@ -145,23 +145,21 @@ exports.postLogin = function(req, res, next) {
 		
 		if (!user) {
 			
-			var dataObj = { loginerrors: [info] };
+			var dataObj = { success: false, errors: [info] };
 
 			if(info.notverified) {
-				dataObj = { notverified: true };
+				dataObj = { success: false, notverified: true };
 			}
 			if(info.inactive) {
-				dataObj = { inactive: true };
+				dataObj = { success: false, inactive: true };
 			}
 
-			dataObj.reqBody = req.body;
-
-			return res.status(400).render(req.url, dataObj);
+			return res.status(400).send(dataObj);
 		}
 
 		req.logIn(user, function(err) {
 			if (err) { return next(err); }
-			res.redirect('/');
+			res.send({success: true, to: req.session.returnTo || '/'});
 		});
 	});
 };
@@ -210,7 +208,7 @@ exports.postForgotPassword = function(req, res) {
 	req.checkBody('email', 'Invalid email address').notEmpty().isEmail();
 	var errors = req.validationErrors();
 	if(errors) {
-		return res.status(400).render(req.url, {errors: errors});
+		return res.status(400).send({success:false, errors: errors});
 	}
 	user.findByEmail(req.body.email).then(function (existingUser) {
 		if(existingUser) {
@@ -231,12 +229,12 @@ exports.postForgotPassword = function(req, res) {
 					tempPasswordObj.emailVerificationLink = req.protocol + "://" + req.get('host')+'/user/account/'+existingUser.id+'/setpassword?token=' + token;
 					mailHelper.sendHtmlMail('passwordreset', tempPasswordObj, 'Microtheta - Password Reset', existingUser.email);
 
-					res.render(req.url, {success: true, email:existingUser.email });
+					res.send({success: true, email: existingUser.email});
 				});
 			});
 		}
 		else {
-			res.status(400).render(req.url, {email: req.body.email, errors: [{msg: 'Email address not found. Please check your email address or sign up for a new account.'}]});
+			res.status(400).send({ success:false, errors: [{msg: 'Email address not found. Please check your email address or sign up for a new account.'}]});
 		}
 	});
 };
@@ -271,6 +269,7 @@ exports.postsetUserPassword = function (req, res) {
 		user.validatePasswordResetToken(req.query.token, req.params.userId).then(function(credentialsObj) {
 			if(credentialsObj) {
 				bcrypt.hash(req.body.password, saltRounds, function(err, hash) {
+					/* TODO: avoid direct access of sequlize function and update via DAO layer */
 					credentialsObj.updateAttributes({
 						password: hash,
 						passwordResetTokenExpired: true
@@ -293,6 +292,10 @@ exports.logout = function(req, res) {
 	auth.logOut(req, res, function() {
 		res.redirect('/');
 	});
+};
+
+exports.getUserDetails = function (req, res) {
+	res.send(req.user);
 };
 
 exports.getUser = function(req, res) {

@@ -10,7 +10,6 @@ module.exports = React.createClass({
 	render: function render() {
 		return (
 			<nav className="tm-navbar uk-navbar uk-navbar-attached">
-
 				<div className="uk-container uk-container-center">
 
 					<a className={"uk-navbar-brand " +( this.props.user ? "uk-hidden-small" : '')} href="/">
@@ -206,10 +205,10 @@ module.exports = React.createClass({
 						<div className="uk-navbar-flip">
 							<ul className="uk-navbar-nav">
 								<li className={ (this.props.currentmenu == 'login' ? 'uk-active' : '')}>
-									<a href='/login'> LOGIN </a>
+									<Link to='/login'> LOGIN </Link>
 								</li>
 								<li className={ (this.props.currentmenu == 'signup' ? 'uk-active' : '')}>
-									<a href='/signup'> CREATE AN ACCOUNT </a>
+									<Link to='/signup'> CREATE AN ACCOUNT </Link>
 								</li>
 							</ul>
 						</div>
