@@ -3,28 +3,48 @@
 var React = require('react');
 var NavBar = require('../shared/navbar');
 var If = require('../shared/if');
+var Loading = require('../shared/loading');
 var $data = require('../utils/fetchdata');
 
 
 module.exports = React.createClass({
-	displayName: 'LoginPage',
+	displayName: 'SignUpPage',
+	
+	showLoading: function(){
+		this.setState({
+			isLoading: true
+		});
+	},
+
+	hideLoading: function(){
+		this.setState({
+			isLoading: false
+		});
+	},
 
 	getInitialState: function() {
 		return {
 			success: false,
 			userEmail: null,
 			errors: [],
-			existingUser: false
+			existingUser: false,
+			isLoading: false
 		}
 	},
 
 	handlePost: function(e) {
 		e.preventDefault();
-
 		var _this = this;
+
+		if(this.state.isLoading) {
+			return false;
+		}
+
+		_this.showLoading();
 
 		$data.post('api/user/signup', $(e.target).serialize())
 		.then(function(data) {
+			_this.hideLoading();
 			if(data.success) {
 				_this.setState({
 					success: true,
@@ -38,7 +58,8 @@ module.exports = React.createClass({
 			}
 		})
 		.catch(function(data) {
-			if(data.sucess === false) {
+			_this.hideLoading();
+			if(data.success === false) {
 				if(data.errors) {
 					_this.setState({
 						errors: data.errors,
@@ -116,65 +137,65 @@ module.exports = React.createClass({
 
 										</div> : null
 								}
+								<Loading loading={this.state.isLoading}>
+									<div className="uk-panel uk-panel-header">
 
-								<div className="uk-panel uk-panel-header">
+										<h2> Sign up </h2>
 
-									<h2> Sign up </h2>
+										<form className="uk-form uk-form-stacked" onSubmit={this.handlePost} > {/* action="/signup" method="post" */}
 
-									<form className="uk-form uk-form-stacked" onSubmit={this.handlePost} > {/* action="/signup" method="post" */}
-
-										<div className="uk-form-row">
-											{ /* <label className="uk-form-label">Your Name</label> */ }
-											<div className="uk-form-controls uk-grid uk-grid-small">
-												<div className="uk-width-1-2">
-													<input autoFocus type="text" placeholder="First Name" name="firstName" className="uk-width-1-1 uk-form-large" required/>
-												</div>
-												<div className="uk-width-1-2">
-													<input type="text" placeholder="Last Name" name="lastName" className="uk-width-1-1 uk-form-large" required />
-												</div>
-											</div>
-										</div>
-
-										<div className="uk-form-row">
-											{ /* <label className="uk-form-label">Your Email</label> */ }
-											<div className="uk-form-controls">
-												<input type="email" placeholder="Email address" name="email" className="uk-width-1-1 uk-form-large" required />
-											</div>
-										</div>
-
-										<div className="uk-form-row">
-											{ /* <label className="uk-form-label">Choose Password</label> */ }
-											<div className="uk-form-controls">
-												<input type="password" placeholder="New password" name="password" className="uk-width-1-1 uk-form-large" required />
-											</div>
-										</div>
-
-										<div className="uk-form-row">
-											{ /* <label className="uk-form-label">Choose Password</label> */ }
-											<div className="uk-form-controls">
-												<input type="password" placeholder="Confirm password" name="confirmpassword"  className="uk-width-1-1 uk-form-large" required />
-											</div>
-										</div>
-
-										<div className="uk-form-row">
-											<div className="uk-form-controls uk-grid uk-grid-small">
-												<div className="uk-width-3-10">
-													<button type="submit" className="uk-width-1-1 uk-button uk-button-primary uk-button-large">
-													Submit
-													</button>
-												</div>
-												<div className="uk-width-7-10">
-													<div className="uk-width-1-1 uk-text-right uk-text-bottom">
-														Already have an account? <a className="uk-link uk-text-nowrap" href="/login">Login here</a>
+											<div className="uk-form-row">
+												{ /* <label className="uk-form-label">Your Name</label> */ }
+												<div className="uk-form-controls uk-grid uk-grid-small">
+													<div className="uk-width-1-2">
+														<input autoFocus type="text" placeholder="First Name" name="firstName" className="uk-width-1-1 uk-form-large" required/>
+													</div>
+													<div className="uk-width-1-2">
+														<input type="text" placeholder="Last Name" name="lastName" className="uk-width-1-1 uk-form-large" required />
 													</div>
 												</div>
 											</div>
-										</div>
 
-									</form>
+											<div className="uk-form-row">
+												{ /* <label className="uk-form-label">Your Email</label> */ }
+												<div className="uk-form-controls">
+													<input type="email" placeholder="Email address" name="email" className="uk-width-1-1 uk-form-large" required />
+												</div>
+											</div>
 
-								</div>
+											<div className="uk-form-row">
+												{ /* <label className="uk-form-label">Choose Password</label> */ }
+												<div className="uk-form-controls">
+													<input type="password" placeholder="New password" name="password" className="uk-width-1-1 uk-form-large" required />
+												</div>
+											</div>
 
+											<div className="uk-form-row">
+												{ /* <label className="uk-form-label">Choose Password</label> */ }
+												<div className="uk-form-controls">
+													<input type="password" placeholder="Confirm password" name="confirmpassword"  className="uk-width-1-1 uk-form-large" required />
+												</div>
+											</div>
+
+											<div className="uk-form-row">
+												<div className="uk-form-controls uk-grid uk-grid-small">
+													<div className="uk-width-3-10">
+														<button type="submit" className="uk-width-1-1 uk-button uk-button-primary uk-button-large">
+														Submit
+														</button>
+													</div>
+													<div className="uk-width-7-10">
+														<div className="uk-width-1-1 uk-text-right uk-text-bottom">
+															Already have an account? <a className="uk-link uk-text-nowrap" href="/login">Login here</a>
+														</div>
+													</div>
+												</div>
+											</div>
+
+										</form>
+
+									</div>
+								</Loading>
 							</div>
 						</If>
 

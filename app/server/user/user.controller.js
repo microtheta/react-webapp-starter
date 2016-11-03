@@ -82,7 +82,7 @@ exports.postSignup = function(req, res) {
 			});
 		}
 		else {
-			res.status(400).send({userExist: true});
+			res.status(400).send({success: false, userExist: true});
 		}
 	});
 };
@@ -148,7 +148,7 @@ exports.postLogin = function(req, res, next) {
 			var dataObj = { success: false, errors: [info] };
 
 			if(info.notverified) {
-				dataObj = { success: false, notverified: true };
+				dataObj = { success: false, email: req.body.email, notverified: true };
 			}
 			if(info.inactive) {
 				dataObj = { success: false, inactive: true };
